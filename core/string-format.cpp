@@ -5,10 +5,12 @@
 #include "divesite.h"
 #include "event.h"
 #include "format.h"
+#include "profile-widget/profilescene.h"
 #include "qthelper.h"
 #include "range.h"
 #include "subsurface-string.h"
 #include "trip.h"
+#include <QBuffer>
 #include <QDateTime>
 #include <QLocale>
 #include <QTextDocument>
@@ -113,6 +115,21 @@ QStringList formatFirstGas(const dive *d)
 			gas << get_gas_string(cyl.gasmix);
 	}
 	return gas;
+}
+
+QString formatProfileImage(const dive *d, bool isGrayscale)
+{
+	ProfileScene profile(1.0, true, isGrayscale);
+	QRect pos(0, 0, 600, 600); // XXX
+	QImage image = profile.draw(pos, d, 0, nullptr, false);
+	QByteArray bytearray;
+	QBuffer buffer(&bytearray);
+	buffer.open(QIODevice::WriteOnly);
+	image.save(&buffer, "JPEG");
+	buffer.close();
+	QString html = "data:image/jpeg;base64,";
+	html.append(bytearray.toBase64());
+	return html;
 }
 
 // Add string to sorted QStringList, if it doesn't already exist and

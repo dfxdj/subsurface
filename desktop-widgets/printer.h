@@ -10,6 +10,7 @@ class ProfileScene;
 class QPainter;
 class QPaintDevice;
 class QRect;
+class QWebElement;
 class QWebView;
 
 class Printer : public QObject {
@@ -30,14 +31,15 @@ private:
 	PrintMode printMode;
 	struct dive *singleDive;
 	int done;
-	void render(int Pages);
-	void flowRender();
 	std::vector<dive *> getDives() const;
-	void putProfileImage(const QRect &box, const QRect &viewPort, QPainter *painter,
-			     struct dive *dive, ProfileScene *profile);
+	QString getProfileImage(int width, int height, const dive *d, bool isGrayscale);
+	bool mainLoadFinished;
+	QEventLoop printWaiter;
+	int imageLoadsPending;
 
 private slots:
 	void templateProgessUpdated(int value);
+	void loadFinished(bool ok);
 
 public:
 	// If singleDive is non-null, then only print this particular dive.
@@ -47,6 +49,9 @@ public:
 	void print();
 	void previewOnePage();
 	QString exportHtml();
+
+public slots:
+	void imageLoadFinished();
 
 signals:
 	void progessUpdated(int value);

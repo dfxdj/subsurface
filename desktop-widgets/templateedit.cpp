@@ -41,6 +41,9 @@ TemplateEdit::TemplateEdit(QWidget *parent, const print_options &printOptions, t
 	btnGroup->addButton(ui->editButton6, 6);
 	connect(btnGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(colorSelect(QAbstractButton*)));
 
+	// preview widget
+	connect(ui->label, SIGNAL(paintRequested(QPrinter *)), this, SLOT(onPaintRequested(QPrinter *)));
+
 	ui->plainTextEdit->setPlainText(grantlee_template);
 	editingCustomColors = false;
 	updatePreview();
@@ -52,16 +55,18 @@ TemplateEdit::~TemplateEdit()
 	delete ui;
 }
 
+void TemplateEdit::onPaintRequested(QPrinter *qprinter)
+{
+	Printer printer(qprinter, printOptions, newTemplateOptions, Printer::PREVIEW, nullptr);
+	printer.print();
+}
+
 void TemplateEdit::updatePreview()
 {
-	// update Qpixmap preview
-	int width = ui->label->width();
-	int height = ui->label->height();
-	QPixmap map(width * 2, height * 2);
-	map.fill(QColor::fromRgb(255, 255, 255));
-	Printer printer(&map, printOptions, newTemplateOptions, Printer::PREVIEW, nullptr);
-	printer.previewOnePage();
-	ui->label->setPixmap(map.scaled(width, height, Qt::IgnoreAspectRatio));
+	if (previewBusy)
+		return;
+	previewBusy = true;
+	ui->label->updatePreview();
 
 	// update colors tab
 	ui->colorLable1->setStyleSheet("QLabel { background-color : \"" + newTemplateOptions.color_palette.color1.name() + "\";}");
@@ -87,6 +92,8 @@ void TemplateEdit::updatePreview()
 		grantlee_template = TemplateLayout::readTemplate(printOptions.p_template);
 	else if (printOptions.type == print_options::STATISTICS)
 		grantlee_template = TemplateLayout::readTemplate(QString::fromUtf8("statistics") + QDir::separator() + printOptions.p_template);
+
+	previewBusy = false;
 }
 
 void TemplateEdit::on_fontsize_valueChanged(int font_size)

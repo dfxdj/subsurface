@@ -113,6 +113,7 @@ QString TemplateLayout::generate(const std::vector<dive *> &dives)
 	QTextStream out(&buffer);
 	parser(tokens, 0, tokens.size(), out, state);
 	htmlContent = out.readAll();
+
 	return htmlContent;
 }
 
@@ -412,7 +413,7 @@ QVariant TemplateLayout::getValue(QString list, QString property, const State &s
 				return "Verdana, Geneva, sans-serif";
 			}
 		} else if (property == "borderwidth") {
-			return templateOptions.border_width;
+			return templateOptions.border_width / 9.0;
 		} else if (property == "font_size") {
 			return templateOptions.font_size / 9.0;
 		} else if (property == "line_spacing") {
@@ -583,6 +584,8 @@ QVariant TemplateLayout::getValue(QString list, QString property, const State &s
 			return formatEndPressure(d);
 		} else if (property == "firstGas") {
 			return formatFirstGas(d);
+		} else if (property == "profileImage") {
+			return formatProfileImage(d, !printOptions.color_selected);
 		}
 	}
 	return QVariant();

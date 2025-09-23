@@ -630,7 +630,7 @@ void ProfileScene::anim(double fraction)
 		axis->anim(fraction);
 }
 
-void ProfileScene::draw(QPainter *painter, const QRect &pos,
+QImage ProfileScene::draw(const QRect &pos,
 			const struct dive *d, int dc,
 			DivePlannerPointsModel *plannerModel, bool inPlanner)
 {
@@ -658,6 +658,14 @@ void ProfileScene::draw(QPainter *painter, const QRect &pos,
 			}
 		}
 	}
+	return image;
+}
+
+void ProfileScene::draw(QPainter *painter, const QRect &pos,
+			const struct dive *d, int dc,
+			DivePlannerPointsModel *plannerModel, bool inPlanner)
+{
+	QImage image = draw(pos, d, dc, plannerModel, inPlanner);
 	painter->drawImage(pos, image);
 }
 

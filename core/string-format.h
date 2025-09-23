@@ -32,5 +32,6 @@ QString formatDayOfWeek(int day);
 QString formatMinutes(int seconds);
 QString formatTripTitle(const dive_trip &trip);
 QString formatTripTitleWithDives(const dive_trip &trip);
+QString formatProfileImage(const dive *d, bool isGrayscale);
 
 #endif

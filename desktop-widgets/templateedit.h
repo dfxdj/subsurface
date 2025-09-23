@@ -5,6 +5,8 @@
 #include <QDialog>
 #include "printoptions.h"
 
+class QPrinter;
+
 namespace Ui {
 class TemplateEdit;
 }
@@ -24,6 +26,7 @@ private slots:
 	void on_colorpalette_currentIndexChanged(int index);
 	void on_buttonBox_clicked(QAbstractButton *button);
 	void colorSelect(QAbstractButton *button);
+	void onPaintRequested(QPrinter *);
 
 private:
 	Ui::TemplateEdit *ui;
@@ -35,6 +38,7 @@ private:
 	QString grantlee_template;
 	void saveSettings();
 	void updatePreview();
+	bool previewBusy = false;
 
 };
 
