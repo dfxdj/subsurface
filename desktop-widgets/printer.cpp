@@ -10,17 +10,23 @@
 
 #include <algorithm>
 #include <memory>
+#include <QBuffer>
 #include <QImage>
 #include <QPainter>
 #include <QPrinter>
-#include <QtWebKitWidgets>
-#include <QWebElementCollection>
-#include <QWebElement>
-#include <iostream>
+#ifdef USE_WEBENGINE
+# include <QWebEngineView>
+#else
+# include <QWebView>
+#endif
 
 Printer::Printer(QPaintDevice *paintDevice, const print_options &printOptions, const template_options &templateOptions, PrintMode printMode, dive *singleDive) :
 	paintDevice(paintDevice),
+#ifdef USE_WEBENGINE
+	webView(new QWebEngineView),
+#else
 	webView(new QWebView),
+#endif
 	printOptions(printOptions),
 	templateOptions(templateOptions),
 	printMode(printMode),

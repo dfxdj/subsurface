@@ -10,8 +10,11 @@ class ProfileScene;
 class QPainter;
 class QPaintDevice;
 class QRect;
-class QWebElement;
+#ifdef USE_WEBENGINE
+class QWebEngineView;
+#else
 class QWebView;
+#endif
 
 class Printer : public QObject {
 	Q_OBJECT
@@ -24,7 +27,11 @@ public:
 
 private:
 	QPaintDevice *paintDevice;
+#ifdef USE_WEBENGINE
+	QWebEngineView *webView;
+#else
 	QWebView *webView;
+#endif
 	const print_options &printOptions;
 	const template_options &templateOptions;
 	QSize pageSize;
